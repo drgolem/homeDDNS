@@ -24,6 +24,9 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		zoneId := Cfg.ZoneId
 		apiToken := Cfg.ApiToken
+		if Cfg.ApiToken == "" {
+			log.Fatalln("API Token not set")
+		}
 		lst, err := utils.GetDnsRecords(zoneId, apiToken)
 		if err != nil {
 			log.Fatalln(err)

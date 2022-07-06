@@ -26,7 +26,6 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
 
 		dryRun, err := cmd.Flags().GetBool("dry-run")
 		if err != nil {
@@ -35,6 +34,9 @@ to quickly create a Cobra application.`,
 
 		zoneId := Cfg.ZoneId
 		apiToken := Cfg.ApiToken
+		if Cfg.ApiToken == "" {
+			log.Fatalln("API Token not set")
+		}
 		lst, err := utils.GetDnsRecords(zoneId, apiToken)
 		if err != nil {
 			log.Fatalln(err)

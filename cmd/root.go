@@ -6,7 +6,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -81,7 +80,4 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Read config file:", err)
 	}
 	fmt.Fprintf(os.Stderr, "Cfg: %#v\n", Cfg)
-	if Cfg.ApiToken == "" {
-		log.Fatalln("API Token not set")
-	}
 }
