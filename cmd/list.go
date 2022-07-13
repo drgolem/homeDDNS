@@ -1,10 +1,11 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Val Gridnev
 
 */
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/DrGolem/homeDDNS/utils"
@@ -14,24 +15,24 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List DNS records for Cloudflare registered zone",
+	Long:  "List DNS records for Cloudflare registered zone",
 	Run: func(cmd *cobra.Command, args []string) {
-		zoneId := Cfg.ZoneId
 		apiToken := Cfg.ApiToken
 		if Cfg.ApiToken == "" {
 			log.Fatalln("API Token not set")
+		}
+		zoneId, err := utils.GetZoneId(Cfg.ZoneName, apiToken)
+		if err != nil {
+			log.Fatalln(err)
 		}
 		lst, err := utils.GetDnsRecords(zoneId, apiToken)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		log.Printf("DNS: %v", lst)
+		for _, rec := range lst {
+			fmt.Printf("id: %s, name: %s, IP: %s\n", rec.Id, rec.Name, rec.IP)
+		}
 	},
 }
 

@@ -13,7 +13,7 @@ import (
 )
 
 type Config struct {
-	ZoneId   string `mapstructure:"ZONE_ID"`
+	ZoneName string `mapstructure:"ZONE_NAME"`
 	ApiToken string `mapstructure:"API_TOKEN"`
 }
 
@@ -24,16 +24,8 @@ var Cfg Config
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "homeDDNS",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "A tool to change IP addresses of cloudflare DNS records",
+	Long:  `A tool to change IP addresses of cloudflare DNS records`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -68,7 +60,7 @@ func initConfig() {
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-	viper.BindEnv("ZONE_ID")
+	viper.BindEnv("ZONE_NAME")
 	viper.BindEnv("API_TOKEN")
 
 	// If a config file is found, read it in.
@@ -79,5 +71,4 @@ func initConfig() {
 	if err := viper.Unmarshal(&Cfg); err != nil {
 		fmt.Fprintln(os.Stderr, "Read config file:", err)
 	}
-	fmt.Fprintf(os.Stderr, "Cfg: %#v\n", Cfg)
 }

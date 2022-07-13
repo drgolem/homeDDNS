@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Val Gridnev
 
 */
 package cmd
@@ -18,13 +18,8 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Updates DNS records to set current IP address",
+	Long:  "Updates DNS records to set current IP address",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		dryRun, err := cmd.Flags().GetBool("dry-run")
@@ -32,10 +27,13 @@ to quickly create a Cobra application.`,
 			log.Fatalln(err)
 		}
 
-		zoneId := Cfg.ZoneId
 		apiToken := Cfg.ApiToken
 		if Cfg.ApiToken == "" {
 			log.Fatalln("API Token not set")
+		}
+		zoneId, err := utils.GetZoneId(Cfg.ZoneName, apiToken)
+		if err != nil {
+			log.Fatalln(err)
 		}
 		lst, err := utils.GetDnsRecords(zoneId, apiToken)
 		if err != nil {
@@ -46,8 +44,10 @@ to quickly create a Cobra application.`,
 			log.Fatalln(err)
 		}
 		if dryRun {
-			log.Printf("DNS: %v", lst)
-			log.Printf("IP: %s", publicIP)
+			fmt.Printf("IP: %s\n", publicIP)
+			for _, rec := range lst {
+				fmt.Printf("id: %s, name: %s, IP: %s\n", rec.Id, rec.Name, rec.IP)
+			}
 		}
 
 		for _, rec := range lst {
@@ -55,7 +55,7 @@ to quickly create a Cobra application.`,
 				if dryRun {
 					log.Printf("Updating [%s] IP %s -> %s", rec.Name, rec.IP, publicIP)
 				} else {
-					err := UpdateDnsIP(zoneId, rec.ID, publicIP, apiToken)
+					err := UpdateDnsIP(zoneId, rec.Id, publicIP, apiToken)
 					if err != nil {
 						log.Fatalln(err)
 					}
